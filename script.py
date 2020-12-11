@@ -12,9 +12,13 @@ OUT_DIR = "output"
 
 
 def load_and_merge(filename, key_df):
+    """Open a data file and merge it with key dataframe"""
+
     # load source data
     filepath = os.path.join(DATA_DIR, filename)
     df = pd.read_excel(filepath, sheet_name=DATA_SHEET_NAME, header=0)
+
+    # add source sheet column
     df["source sheet"] = filename
 
     # merge on columns 'depth' & 'plot'
@@ -23,6 +27,7 @@ def load_and_merge(filename, key_df):
 
 
 def save_outout(full_df):
+    """Save complete DataFrame to excel file"""
 
     # create output folder if it doesn't exist
     try:
@@ -34,11 +39,16 @@ def save_outout(full_df):
     today_str = date.today().strftime("%m-%d-%Y")
     filename = f"output_{today_str}.xlsx"
     full_df.to_excel(os.path.join(OUT_DIR, filename), index=False)
+
+    # print info
     cprint("\nDone!", "green", attrs=["bold"])
     print(f"> Saved result to file '{os.path.join(OUT_DIR, filename)}'\n")
 
 
 def main():
+    """
+    Iterate over data files, merging with key data and concatenating into single DataFrame
+    """
     print("\n----- RUNNING -----")
 
     # load key/treatment data
