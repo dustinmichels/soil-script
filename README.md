@@ -1,4 +1,4 @@
-# Soil Script
+# Soil Script 🌱
 
 A python script to wrangle soil data files involved in UM research. It will merge data files with key/treatment data and combine into a single output file.
 
