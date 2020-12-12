@@ -1,10 +1,11 @@
 import os
 from datetime import date
 
+import click
 import pandas as pd
 from termcolor import colored, cprint
 
-# CONGIG
+# DEFAULTS
 KEY_SPREADSHEET = "POXC_FinalData.xlsx"
 DATA_SHEET_NAME = "POX-C Calculation"
 DATA_DIR = "data"
@@ -45,11 +46,13 @@ def save_outout(full_df):
     print(f"> Saved result to file '{os.path.join(OUT_DIR, filename)}'\n")
 
 
-def main():
+@click.command()
+@click.option("--datadir", prompt="Path to data directory?", default=DATA_DIR)
+def main(datadir):
     """
     Iterate over data files, merging with key data and concatenating into single DataFrame
     """
-    print("\n----- RUNNING -----")
+    # print("\n----- RUNNING -----")
 
     # load key/treatment data
     key_df = pd.read_excel(os.path.join(DATA_DIR, KEY_SPREADSHEET), header=0)
@@ -104,5 +107,5 @@ def get_input():
 
 
 if __name__ == "__main__":
-    get_input()
+    # get_input()
     main()
