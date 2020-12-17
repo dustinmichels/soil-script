@@ -20,7 +20,7 @@ def load_and_merge(filename, key_df):
     filepath = os.path.join(DATA_DIR, filename)
     df = pd.read_excel(filepath, sheet_name=DATA_SHEET_NAME, header=0)
 
-    # add source sheet column
+    # add source sheet as column
     df["source sheet"] = filename
 
     # merge on columns 'depth' & 'plot'
@@ -41,8 +41,12 @@ def save_outout(full_df):
 
     # save dataframe to file with today's date
     today_str = date.today().strftime("%m-%d-%Y")
-    # filename = f"output_{today_str}.xlsx"
-    # full_df.to_excel(os.path.join(OUT_DIR, filename), index=False)
+
+    # save as csv
+    filename = f"output_{today_str}.xlsx"
+    full_df.to_excel(os.path.join(OUT_DIR, filename), index=False)
+
+    # save as excel
     filename = f"output_{today_str}.csv"
     full_df.to_csv(os.path.join(OUT_DIR, filename), index=False)
 
@@ -93,6 +97,7 @@ def main():
     # iterate over files, merging with keys
     dfs = []
     for filename in os.listdir(DATA_DIR):
+        # TODO: ignore some filetypes
         if filename != KEY_SPREADSHEET:
             try:
                 merged_df = load_and_merge(filename, key_df)
