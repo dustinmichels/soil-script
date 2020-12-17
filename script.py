@@ -110,6 +110,10 @@ def main():
     # concatenate merged dfs into single datafame
     full_df = pd.concat(dfs)
 
+    # sort by plot
+    full_df["plot"] = full_df["plot"].astype(str)
+    full_df = full_df.sort_values(by="plot", axis=0)
+
     # save output to file
     save_outout(full_df)
 
