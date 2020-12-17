@@ -42,17 +42,18 @@ def save_outout(full_df):
     # save dataframe to file with today's date
     today_str = date.today().strftime("%m-%d-%Y")
 
-    # save as csv
-    filename = f"output_{today_str}.xlsx"
-    full_df.to_excel(os.path.join(OUT_DIR, filename), index=False)
-
     # save as excel
-    filename = f"output_{today_str}.csv"
-    full_df.to_csv(os.path.join(OUT_DIR, filename), index=False)
+    filename1 = f"output_{today_str}.xlsx"
+    full_df.to_excel(os.path.join(OUT_DIR, filename1), index=False)
+
+    # save as csv
+    filename2 = f"output_{today_str}.csv"
+    full_df.to_csv(os.path.join(OUT_DIR, filename2), index=False)
 
     # print info
     cprint("\nDone!", "green", attrs=["bold"])
-    print(f"> Saved result to file '{os.path.join(OUT_DIR, filename)}'\n")
+    print(f"> Saved result to file '{os.path.join(OUT_DIR, filename1)}")
+    print(f"> Saved result to file '{os.path.join(OUT_DIR, filename2)}'\n")
 
 
 def get_input():
@@ -97,8 +98,7 @@ def main():
     # iterate over files, merging with keys
     dfs = []
     for filename in os.listdir(DATA_DIR):
-        # TODO: ignore some filetypes
-        if filename != KEY_SPREADSHEET:
+        if (".xlsx" in filename) and (filename != KEY_SPREADSHEET):
             try:
                 merged_df = load_and_merge(filename, key_df)
                 dfs.append(merged_df)
