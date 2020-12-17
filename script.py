@@ -2,6 +2,7 @@ import os
 from datetime import date
 
 import pandas as pd
+from tabulate import tabulate
 from termcolor import colored, cprint
 
 # CONGIG
@@ -56,12 +57,42 @@ def save_outout(full_df):
     print(f"> Saved result to file '{os.path.join(OUT_DIR, filename2)}'\n")
 
 
+def data_validation(full_df, key_df):
+    print("\n{:-^30}".format("CHECKING DATA"))
+
+    # cleanup
+    full_df["plot"] = full_df["plot"].astype(str)
+    key_df["plot"] = key_df["plot"].astype(str)
+    full_df = full_df.reset_index(drop=True)
+
+    # look for missing keys
+    actual_keys = list(key_df.set_index(["plot", "depth"]).index)
+    found_keys = list(full_df.set_index(["plot", "depth"]).index)
+    missing = []
+    for key_tuple in actual_keys:
+        if key_tuple not in found_keys:
+            missing.append(key_tuple)
+    if missing:
+        print("\n\nYou do not have data for every key. Missing keys:\n")
+        print(tabulate(missing, headers=["plot", "depth"], tablefmt="pipe"))
+
+    # look for duplicates
+    full_df_keys = full_df[["plot", "depth"]]
+    duplicates = full_df_keys[full_df_keys.duplicated()]
+    if not duplicates.empty:
+        print("\n\nYou have some duplicated keys in your data. Duplicates:\n")
+        print(duplicates.to_markdown())
+
+
 def get_input():
     """
     Prompt for input which would override default, global values
     """
 
     global DATA_DIR, OUT_DIR, KEY_SPREADSHEET, DATA_SHEET_NAME
+
+    print("\n{:-^30}".format("CONFIG"))
+    print("Press enter to use default values.\n")
 
     boldify = lambda x: colored(f"[{x}]", attrs=["bold"])
 
@@ -90,6 +121,7 @@ def main():
     """
     Iterate over data files, merging with key data and concatenating into single DataFrame
     """
+    print("\n{:-^30}".format("RUNNING"))
 
     # load key/treatment data
     key_df = pd.read_excel(os.path.join(DATA_DIR, KEY_SPREADSHEET), header=0)
@@ -117,11 +149,10 @@ def main():
     # save output to file
     save_outout(full_df)
 
+    # validate data
+    data_validation(full_df, key_df)
+
 
 if __name__ == "__main__":
-    print("\n{:-^30}".format("CONFIG"))
-    print("Press enter to use default values.\n")
-    get_input()
-
-    print("\n{:-^30}".format("RUNNING"))
+    # get_input()
     main()
